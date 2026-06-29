@@ -9,9 +9,9 @@ const MONTHS_MN = ['1-р сар', '2-р сар', '3-р сар', '4-р сар', '
 const DAYS_MN = ['Ням', 'Дав', 'Мяг', 'Лха', 'Пүр', 'Баа', 'Бям'];
 
 const statusColors: Record<string, string> = {
-  pending: 'bg-amber-100 border-amber-400 text-amber-800',
-  confirmed: 'bg-emerald-100 border-emerald-400 text-emerald-800',
-  completed: 'bg-slate-100 border-slate-400 text-slate-600',
+  pending: 'bg-gold/10 border-gold/40 text-amber-800',
+  confirmed: 'bg-primary/10 border-primary/40 text-primary-dark',
+  completed: 'bg-slate-100 border-slate-300 text-slate-500',
 };
 
 interface Props {
@@ -73,28 +73,28 @@ export default function CalendarView({ bookings, onEdit }: Props) {
 
   return (
     <div className="space-y-4">
-      <div className="bg-white rounded-xl shadow-sm border border-emerald-100 p-4">
+      <div className="bg-white rounded-xl shadow-sm border border-border p-4">
         <div className="flex items-center justify-between mb-4">
           <button
             onClick={prevMonth}
-            className="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 transition-colors text-sm font-medium"
+            className="px-3 py-1.5 rounded-lg bg-primary/5 hover:bg-primary/10 text-primary transition-colors text-sm font-medium"
           >
-            ← Өмнөх
+            Өмнөх
           </button>
-          <h3 className="text-lg font-bold text-slate-800">
+          <h3 className="text-lg font-bold text-foreground tracking-wide">
             {currentYear} {MONTHS_MN[currentMonth]}
           </h3>
           <button
             onClick={nextMonth}
-            className="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 transition-colors text-sm font-medium"
+            className="px-3 py-1.5 rounded-lg bg-primary/5 hover:bg-primary/10 text-primary transition-colors text-sm font-medium"
           >
-            Дараах →
+            Дараах
           </button>
         </div>
 
         <div className="grid grid-cols-7 gap-1">
           {DAYS_MN.map((d) => (
-            <div key={d} className="text-center text-xs font-semibold text-slate-500 py-2">
+            <div key={d} className="text-center text-xs font-semibold text-muted py-2">
               {d}
             </div>
           ))}
@@ -113,14 +113,14 @@ export default function CalendarView({ bookings, onEdit }: Props) {
                 onClick={() => setSelectedDate(isSel ? null : dateStr)}
                 className={`relative min-h-[60px] p-1 rounded-lg border text-left transition-all text-sm ${
                   isSel
-                    ? 'border-emerald-500 bg-emerald-50 ring-2 ring-emerald-200'
+                    ? 'border-accent bg-accent/5 ring-2 ring-accent/20'
                     : dayBookings.length > 0
-                      ? 'border-emerald-200 bg-emerald-50/50 hover:border-emerald-300'
-                      : 'border-transparent hover:bg-slate-50'
+                      ? 'border-border bg-primary/[0.02] hover:border-primary/30'
+                      : 'border-transparent hover:bg-white/60'
                 } ${isToday(day) ? 'font-bold' : ''}`}
               >
                 <span
-                  className={`text-xs ${isToday(day) ? 'bg-emerald-600 text-white w-5 h-5 flex items-center justify-center rounded-full' : ''}`}
+                  className={`text-xs ${isToday(day) ? 'bg-accent text-white w-5 h-5 flex items-center justify-center rounded-full' : ''}`}
                 >
                   {day}
                 </span>
@@ -146,45 +146,45 @@ export default function CalendarView({ bookings, onEdit }: Props) {
       </div>
 
       {selectedDate && (
-        <div className="bg-white rounded-xl shadow-sm border border-emerald-100 p-4">
+        <div className="bg-white rounded-xl shadow-sm border border-border p-4">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-base font-bold text-slate-800">
+            <h3 className="text-base font-bold text-foreground">
               {selectedDate === todayStr ? 'Өнөөдөр' : formatDate(selectedDate)}
             </h3>
-            <span className="text-sm text-slate-500">{selectedBookings.length} захиалга</span>
+            <span className="text-sm text-muted">{selectedBookings.length} захиалга</span>
           </div>
 
           <DailySummary bookings={selectedBookings} />
 
           <div className="mt-3 space-y-2">
             {selectedBookings.length === 0 && (
-              <p className="text-sm text-slate-400 text-center py-4">Энэ өдөр захиалга байхгүй</p>
+              <p className="text-sm text-muted text-center py-4">Энэ өдөр захиалга байхгүй</p>
             )}
             {selectedBookings.map((b) => (
               <div
                 key={b.id}
-                className="flex items-start justify-between p-3 rounded-lg border border-slate-100 hover:border-emerald-200 transition-colors cursor-pointer"
+                className="flex items-start justify-between p-3 rounded-lg border border-border hover:border-primary/30 transition-colors cursor-pointer"
                 onClick={() => onEdit?.(b)}
               >
                 <div className="space-y-1">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-semibold text-sm text-slate-800">{b.groupName}</span>
-                    <span className="text-xs text-slate-400">|</span>
-                    <span className="text-xs text-slate-500">{b.guideName}</span>
-                    <span className="text-xs text-slate-400">|</span>
-                    <span className="text-xs text-slate-500">{b.arrivalTime}</span>
+                    <span className="font-semibold text-sm text-foreground">{b.groupName}</span>
+                    <span className="text-xs text-muted">|</span>
+                    <span className="text-xs text-muted">{b.guideName}</span>
+                    <span className="text-xs text-muted">|</span>
+                    <span className="text-xs text-muted">{b.arrivalTime}</span>
                     <span
                       className={`text-xs px-2 py-0.5 rounded-full border ${statusColors[b.status]}`}
                     >
                       {b.status === 'pending' ? 'Хүлээгдэж буй' : b.status === 'confirmed' ? 'Баталгаажсан' : 'Дууссан'}
                     </span>
                   </div>
-                  <div className="text-xs text-slate-500 flex gap-3 flex-wrap">
+                  <div className="text-xs text-muted flex gap-3 flex-wrap">
                     <span>Жуулчид: {b.maleTourists + b.femaleTourists}</span>
                     <span>♂{b.maleTourists} ♀{b.femaleTourists}</span>
                     <span>Бариа: ♂{b.saunaMale} ♀{b.saunaFemale}</span>
                   </div>
-                  <div className="text-xs text-slate-400">
+                  <div className="text-xs text-muted/70">
                     {b.guide.lastName} {b.guide.firstName} | {b.guide.phone} {b.busNumber ? `| Автобус: ${b.busNumber}` : ''}
                   </div>
                 </div>
@@ -193,7 +193,7 @@ export default function CalendarView({ bookings, onEdit }: Props) {
                     e.stopPropagation();
                     onEdit?.(b);
                   }}
-                  className="text-emerald-600 hover:text-emerald-500 text-sm font-medium shrink-0"
+                  className="text-primary hover:text-primary-light text-sm font-medium shrink-0"
                 >
                   Засах
                 </button>

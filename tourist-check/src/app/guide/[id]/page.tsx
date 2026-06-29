@@ -17,7 +17,7 @@ export default function EditBookingPage() {
 
   if (!state.user || !booking) {
     return (
-      <div className="text-center py-12 text-slate-500">
+      <div className="text-center py-12 text-muted">
         {!booking ? 'Захиалга олдсонгүй' : 'Түр хүлээгээрэй...'}
       </div>
     );
@@ -43,12 +43,13 @@ export default function EditBookingPage() {
   }
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-6">
-      <div className="text-center mb-6">
-        <h1 className="text-2xl font-bold text-emerald-800">Захиалга засах</h1>
-        <p className="text-sm text-slate-500 mt-1">{booking.arrivalDate} {booking.arrivalTime}</p>
+    <div className="max-w-lg mx-auto px-4 py-8">
+      <div className="text-center mb-8">
+        <div className="w-12 h-0.5 bg-accent mx-auto mb-4" />
+        <h1 className="text-2xl font-bold tracking-wide text-primary-dark">Захиалга засах</h1>
+        <p className="text-sm text-muted mt-1.5">{booking.arrivalDate} {booking.arrivalTime}</p>
       </div>
-      <div className="bg-white rounded-2xl shadow-md border border-emerald-100 p-5">
+      <div className="bg-white rounded-2xl shadow-md border border-border p-6 border-t-4 border-t-accent">
         <GuideBookingForm existingBooking={booking} onSuccess={() => router.push('/guide')} />
       </div>
     </div>

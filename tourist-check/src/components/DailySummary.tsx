@@ -23,12 +23,12 @@ export default function DailySummary({ bookings }: Props) {
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
-      <SummaryCard label="Нийт" value={`${totals.total}`} color="bg-emerald-50 text-emerald-700 border-emerald-200" />
-      <SummaryCard label="Эрэгтэй" value={`♂ ${totals.male}`} color="bg-blue-50 text-blue-700 border-blue-200" />
-      <SummaryCard label="Эмэгтэй" value={`♀ ${totals.female}`} color="bg-pink-50 text-pink-700 border-pink-200" />
-      <SummaryCard label="Бариа (Эр)" value={`♂ ${totals.saunaMale}`} color="bg-cyan-50 text-cyan-700 border-cyan-200" />
-      <SummaryCard label="Бариа (Эм)" value={`♀ ${totals.saunaFemale}`} color="bg-rose-50 text-rose-700 border-rose-200" />
-      <SummaryCard label="Захиалга" value={`${totals.bookings}`} color="bg-amber-50 text-amber-700 border-amber-200" />
+      <SummaryCard label="Нийт" value={`${totals.total}`} color="bg-primary/5 text-primary-dark border-primary/20" />
+      <SummaryCard label="Эрэгтэй" value={`${totals.male}`} color="bg-accent/5 text-accent border-accent/20" />
+      <SummaryCard label="Эмэгтэй" value={`${totals.female}`} color="bg-gold/5 text-amber-800 border-gold/20" />
+      <SummaryCard label="Бариа (Эр)" value={`${totals.saunaMale}`} color="bg-primary/5 text-primary-dark border-primary/20" />
+      <SummaryCard label="Бариа (Эм)" value={`${totals.saunaFemale}`} color="bg-accent/5 text-accent border-accent/20" />
+      <SummaryCard label="Захиалга" value={`${totals.bookings}`} color="bg-gold/5 text-amber-800 border-gold/20" />
     </div>
   );
 }

@@ -105,23 +105,23 @@ export default function GuideBookingForm({ existingBooking, onSuccess }: Props) 
   };
 
   const inputClass = (field: keyof typeof errors) =>
-    `w-full px-3 py-2.5 rounded-lg border ${errors[field] ? 'border-red-400 ring-2 ring-red-200' : 'border-emerald-200'} bg-white focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 transition-all text-base`;
+    `w-full px-3 py-2.5 rounded-lg border ${errors[field] ? 'border-red-400 ring-2 ring-red-200' : 'border-border'} bg-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all text-base`;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       {success && (
-        <div className="bg-emerald-50 border border-emerald-300 text-emerald-800 px-4 py-3 rounded-lg text-sm">
-          ✓ Амжилттай хадгалагдлаа
+        <div className="bg-primary/5 border border-primary/20 text-primary-dark px-4 py-3 rounded-lg text-sm font-medium">
+          Амжилттай хадгалагдлаа
         </div>
       )}
       {apiError && (
         <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded-lg text-sm">
-          ✕ {apiError}
+          {apiError}
         </div>
       )}
       {editWindowExpired && (
-        <div className="bg-amber-50 border border-amber-300 text-amber-700 px-4 py-3 rounded-lg text-sm">
-          ⏰ 24 цагийн хугацаа дууссан. Энэ захиалгыг шинэчлэх боломжгүй.
+        <div className="bg-gold/10 border border-gold/30 text-amber-800 px-4 py-3 rounded-lg text-sm">
+          24 цагийн хугацаа дууссан. Энэ захиалгыг шинэчлэх боломжгүй.
         </div>
       )}
 
@@ -275,7 +275,7 @@ export default function GuideBookingForm({ existingBooking, onSuccess }: Props) 
           <select
             value={editStatus}
             onChange={(e) => setEditStatus(e.target.value as Booking['status'])}
-            className="w-full px-3 py-2.5 rounded-lg border border-emerald-200 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-400 text-base"
+            className="w-full px-3 py-2.5 rounded-lg border border-border bg-white focus:outline-none focus:ring-2 focus:ring-primary text-base"
           >
             <option value="pending">Хүлээгдэж буй</option>
             <option value="confirmed">Баталгаажсан</option>
@@ -287,10 +287,10 @@ export default function GuideBookingForm({ existingBooking, onSuccess }: Props) 
       <button
         type="submit"
         disabled={editWindowExpired}
-        className={`w-full font-semibold py-3 px-6 rounded-xl shadow-md transition-all text-lg ${
+        className={`w-full font-semibold py-3 px-6 rounded-xl shadow-md transition-all text-lg tracking-wide ${
           editWindowExpired
             ? 'bg-slate-300 text-slate-500 cursor-not-allowed shadow-none'
-            : 'bg-emerald-600 hover:bg-emerald-500 text-white hover:shadow-lg active:scale-[0.98]'
+            : 'bg-accent hover:bg-accent-light text-white hover:shadow-lg active:scale-[0.98]'
         }`}
       >
         {existingBooking ? 'Шинэчлэх' : 'Хадгалах'}

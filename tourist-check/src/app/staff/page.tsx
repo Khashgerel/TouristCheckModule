@@ -25,41 +25,42 @@ export default function StaffPage() {
   if (!state.user) return null;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-6">
       {state.loading && (
-        <div className="text-center py-2 text-sm text-emerald-600 animate-pulse">📦 Өгөгдөл татаж байна...</div>
+        <div className="text-center py-2 text-sm text-primary animate-pulse">Өгөгдөл татаж байна...</div>
       )}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-emerald-800">Ажилтны хянах самбар</h1>
-          <p className="text-sm text-slate-500 mt-1">Нийт {state.bookings.length} захиалга</p>
+          <div className="w-12 h-0.5 bg-accent mb-3" />
+          <h1 className="text-2xl font-bold tracking-wide text-primary-dark">Ажилтны хянах самбар</h1>
+          <p className="text-sm text-muted mt-1">Нийт {state.bookings.length} захиалга</p>
         </div>
         <div className="flex gap-2">
           <button
             onClick={() => setView('calendar')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
               view === 'calendar'
-                ? 'bg-emerald-600 text-white shadow-sm'
-                : 'bg-white text-slate-600 border border-emerald-200 hover:bg-emerald-50'
+                ? 'bg-primary text-white shadow-sm'
+                : 'bg-white text-foreground border border-border hover:bg-primary/5'
             }`}
           >
-            📅 Календар харах
+            Календар харах
           </button>
           <button
             onClick={() => setView('list')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
               view === 'list'
-                ? 'bg-emerald-600 text-white shadow-sm'
-                : 'bg-white text-slate-600 border border-emerald-200 hover:bg-emerald-50'
+                ? 'bg-primary text-white shadow-sm'
+                : 'bg-white text-foreground border border-border hover:bg-primary/5'
             }`}
           >
-            📋 Жагсаалт харах
+            Жагсаалт харах
           </button>
         </div>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <div className={view === 'calendar' ? 'xl:col-span-2' : 'xl:col-span-2'}>
+        <div className="xl:col-span-2">
           {view === 'calendar' ? (
             <CalendarView
               bookings={state.bookings}
@@ -74,8 +75,8 @@ export default function StaffPage() {
         </div>
 
         <div className="xl:col-span-1">
-          <div className="bg-white rounded-2xl shadow-md border border-emerald-100 p-5 sticky top-6">
-            <h2 className="text-lg font-semibold text-slate-700 mb-4">
+          <div className="bg-white rounded-2xl shadow-md border border-border p-5 sticky top-6 border-t-4 border-t-accent">
+            <h2 className="text-lg font-semibold text-foreground mb-4 tracking-wide">
               {editingBooking ? 'Захиалга засах' : 'Шинэ захиалга'}
             </h2>
             <GuideBookingForm
@@ -87,7 +88,7 @@ export default function StaffPage() {
             {editingBooking && (
               <button
                 onClick={() => setEditingBooking(null)}
-                className="mt-3 w-full text-sm text-slate-500 hover:text-slate-700 py-2 transition-colors"
+                className="mt-3 w-full text-sm text-muted hover:text-foreground py-2 transition-colors"
               >
                 Цуцлах
               </button>
