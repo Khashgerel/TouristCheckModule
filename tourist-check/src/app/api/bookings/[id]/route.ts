@@ -50,14 +50,6 @@ export async function PUT(
       if (err.message === 'DUPLICATE') {
         return NextResponse.json({ error: 'Энэ групп, өдөр, цагт захиалга давхардаж байна' }, { status: 409 });
       }
-      if (err.message.startsWith('TIME_GAP:')) {
-        const times = err.message.replace('TIME_GAP:', '').split(',');
-        const timeList = times.join(', ');
-        return NextResponse.json({
-          error: `Захиалгуудын хооронд 3-аас доошгүй цагийн зай байх ёстой. Давхцаж буй цагууд: ${timeList}`,
-          conflictingTimes: times,
-        }, { status: 409 });
-      }
       if (err.message === 'EDIT_WINDOW_EXPIRED') {
         return NextResponse.json({ error: '24 цагийн хугацаа дууссан тул захиалгыг шинэчлэх боломжгүй' }, { status: 403 });
       }

@@ -50,11 +50,6 @@ export function rowToBooking(row: BookingRow) {
   };
 }
 
-function timeToMinutes(t: string): number {
-  const [h, m] = t.split(':').map(Number);
-  return h * 60 + m;
-}
-
 export async function checkDuplicate(
   arrivalDate: string,
   arrivalTime: string,
@@ -68,26 +63,6 @@ export async function checkDuplicate(
     [arrivalDate, arrivalTime, groupName, excludeId ?? null]
   );
   return result.rows.length === 0;
-}
-
-export async function checkTimeGap(
-  arrivalDate: string,
-  arrivalTime: string,
-  excludeId?: string
-): Promise<string[]> {
-  const result = await query(
-    `SELECT arrival_time FROM bookings
-     WHERE arrival_date = $1 AND ($2::uuid IS NULL OR id != $2)`,
-    [arrivalDate, excludeId ?? null]
-  );
-  const newMin = timeToMinutes(arrivalTime);
-  const conflicts: string[] = [];
-  for (const row of result.rows) {
-    const raw = row.arrival_time;
-    const t = typeof raw === 'string' ? raw.slice(0, 5) : new Date(raw).toTimeString().slice(0, 5);
-    if (Math.abs(newMin - timeToMinutes(t)) < 180) conflicts.push(t);
-  }
-  return conflicts;
 }
 
 export function isWithinEditWindow(arrivalDate: string, arrivalTime: string): boolean {
@@ -132,12 +107,8 @@ export async function createBooking(data: {
   guideId?: string;
   guideName?: string;
 }) {
-  const [dupOk, conflicts] = await Promise.all([
-    checkDuplicate(data.arrivalDate, data.arrivalTime, data.groupName),
-    checkTimeGap(data.arrivalDate, data.arrivalTime),
-  ]);
+  const dupOk = await checkDuplicate(data.arrivalDate, data.arrivalTime, data.groupName);
   if (!dupOk) throw new Error('DUPLICATE');
-  if (conflicts.length > 0) throw new Error(`TIME_GAP:${conflicts.join(',')}`);
 
   const result = await query(
     `INSERT INTO bookings (guide_id, guide_name, group_name, arrival_date, arrival_time,
@@ -190,12 +161,8 @@ export async function updateBooking(id: string, data: {
 
   if (data.arrivalDate || data.arrivalTime || data.groupName) {
     const finalGroup = data.groupName ?? existing.groupName;
-    const [dupOk, conflicts] = await Promise.all([
-      checkDuplicate(finalDate, finalTime, finalGroup, id),
-      checkTimeGap(finalDate, finalTime, id),
-    ]);
+    const dupOk = await checkDuplicate(finalDate, finalTime, finalGroup, id);
     if (!dupOk) throw new Error('DUPLICATE');
-    if (conflicts.length > 0) throw new Error(`TIME_GAP:${conflicts.join(',')}`);
   }
 
   const fields: string[] = [];

@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useReducer, useCallback, type ReactNode } from 'react';
+import { createContext, useContext, useReducer, useCallback, useEffect, type ReactNode } from 'react';
 import type { Booking, User } from './types';
 
 const MOCK_STAFF: User = { id: 'staff-1', role: 'staff', name: 'Ажилтан' };
@@ -14,6 +14,7 @@ interface State {
 type Action =
   | { type: 'LOGIN' }
   | { type: 'LOGOUT' }
+  | { type: 'RESTORE_USER'; payload: User }
   | { type: 'SET_LOADING'; payload: boolean }
   | { type: 'SET_BOOKINGS'; payload: Booking[] }
   | { type: 'ADD_BOOKING'; payload: Booking }
@@ -26,6 +27,8 @@ function reducer(state: State, action: Action): State {
       return { ...state, user: MOCK_STAFF };
     case 'LOGOUT':
       return { ...state, user: null, bookings: [] };
+    case 'RESTORE_USER':
+      return { ...state, user: action.payload };
     case 'SET_LOADING':
       return { ...state, loading: action.payload };
     case 'SET_BOOKINGS':
@@ -74,13 +77,26 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     loading: false,
   });
 
+  useEffect(() => {
+    const stored = localStorage.getItem('user');
+    if (stored) {
+      try {
+        dispatch({ type: 'RESTORE_USER', payload: JSON.parse(stored) });
+      } catch { /* ignore invalid JSON */ }
+    }
+  }, []);
+
   const login = (username: string, password: string) => {
     if (username !== DEMO_USERNAME || password !== DEMO_PASSWORD) return false;
     dispatch({ type: 'LOGIN' });
+    localStorage.setItem('user', JSON.stringify(MOCK_STAFF));
     return true;
   };
 
-  const logout = () => dispatch({ type: 'LOGOUT' });
+  const logout = () => {
+    dispatch({ type: 'LOGOUT' });
+    localStorage.removeItem('user');
+  };
 
   const loadBookings = useCallback(async () => {
     dispatch({ type: 'SET_LOADING', payload: true });

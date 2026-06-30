@@ -35,14 +35,6 @@ export async function POST(request: Request) {
       if (err.message === 'DUPLICATE') {
         return NextResponse.json({ error: 'Энэ групп, өдөр, цагт захиалга давхардаж байна' }, { status: 409 });
       }
-      if (err.message.startsWith('TIME_GAP:')) {
-        const times = err.message.replace('TIME_GAP:', '').split(',');
-        const timeList = times.join(', ');
-        return NextResponse.json({
-          error: `Захиалгуудын хооронд 3-аас доошгүй цагийн зай байх ёстой. Давхцаж буй цагууд: ${timeList}`,
-          conflictingTimes: times,
-        }, { status: 409 });
-      }
     }
     console.error('POST /api/bookings error:', err);
     return NextResponse.json({ error: 'Захиалга үүсгэхэд алдаа гарлаа' }, { status: 500 });
