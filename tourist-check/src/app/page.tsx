@@ -78,13 +78,6 @@ export default function Home() {
               Нэвтрэх
             </button>
           </form>
-
-          <div className="bg-primary/5 border border-primary/20 rounded-xl px-4 py-3 text-sm text-primary-dark space-y-0.5">
-            <p className="font-semibold">Демо нэвтрэх:</p>
-            <p>Нэр: <span className="font-mono font-bold">admin</span></p>
-            <p>Нууц үг: <span className="font-mono font-bold">admin123</span></p>
-          </div>
-
           <div className="text-center text-sm text-muted pt-2 border-t border-border">
             Хөтөч нар <Link href="/guide" className="text-accent hover:text-accent-light font-medium">бүртгэлийн хуудас</Link> руу орно уу
           </div>
