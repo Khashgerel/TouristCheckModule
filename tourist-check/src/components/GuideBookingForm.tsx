@@ -41,11 +41,14 @@ export default function GuideBookingForm({ existingBooking, onSuccess }: Props) 
   const [errors, setErrors] = useState<Partial<Record<keyof BookingFormData | keyof GuideInfo, string>>>({});
   const [success, setSuccess] = useState(false);
   const [apiError, setApiError] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalType, setModalType] = useState<'success' | 'error'>('success');
   const [editStatus, setEditStatus] = useState<Booking['status']>(existingBooking?.status ?? 'pending');
 
   const editWindowExpired = existingBooking ? !isEditable(existingBooking) : false;
 
-  const validate = (): boolean => {
+  const validate = (): string[] => {
     const errs: typeof errors = {};
     if (!form.groupName.trim()) errs.groupName = 'Аяллын бүлгийн нэр оруулна уу';
     if (!form.arrivalDate) errs.arrivalDate = 'Ирэх өдрөө сонгоно уу';
@@ -65,17 +68,25 @@ export default function GuideBookingForm({ existingBooking, onSuccess }: Props) 
       errs.phone = 'Утасны дугаар буруу байна';
     }
     setErrors(errs);
-    return Object.keys(errs).length === 0;
+    return Object.values(errs).filter(Boolean);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSuccess(false);
     setApiError('');
-    if (!validate()) return;
+    const validationErrors = validate();
+    if (validationErrors.length > 0) {
+      setModalMessage(validationErrors.join('\n'));
+      setModalType('error');
+      setShowModal(true);
+      return;
+    }
 
     if (editWindowExpired) {
-      setApiError('24 цагийн хугацаа дууссан тул захиалгыг шинэчлэх боломжгүй');
+      setModalMessage('24 цагийн хугацаа дууссан тул захиалгыг шинэчлэх боломжгүй');
+      setModalType('error');
+      setShowModal(true);
       return;
     }
 
@@ -84,11 +95,16 @@ export default function GuideBookingForm({ existingBooking, onSuccess }: Props) 
       : await addBooking(form);
 
     if (!result.ok) {
-      setApiError(result.error);
+      setModalMessage(result.error);
+      setModalType('error');
+      setShowModal(true);
       return;
     }
     setSuccess(true);
     setApiError('');
+    setModalMessage('Амжилттай');
+    setModalType('success');
+    setShowModal(true);
     if (!existingBooking) setForm({ ...emptyForm });
     setTimeout(() => setSuccess(false), 4000);
     onSuccess?.();
@@ -109,16 +125,6 @@ export default function GuideBookingForm({ existingBooking, onSuccess }: Props) 
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      {success && (
-        <div className="bg-primary/5 border border-primary/20 text-primary-dark px-4 py-3 rounded-lg text-sm font-medium">
-          Амжилттай хадгалагдлаа
-        </div>
-      )}
-      {apiError && (
-        <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded-lg text-sm">
-          {apiError}
-        </div>
-      )}
       {editWindowExpired && (
         <div className="bg-gold/10 border border-gold/30 text-amber-800 px-4 py-3 rounded-lg text-sm">
           24 цагийн хугацаа дууссан. Энэ захиалгыг шинэчлэх боломжгүй.
@@ -295,6 +301,49 @@ export default function GuideBookingForm({ existingBooking, onSuccess }: Props) 
       >
         {existingBooking ? 'Шинэчлэх' : 'Хадгалах'}
       </button>
+
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className={`relative w-full max-w-sm mx-4 rounded-2xl shadow-2xl p-6 ${
+            modalType === 'success' ? 'bg-white' : 'bg-white'
+          }`}>
+            <div className="text-center">
+              {modalType === 'success' ? (
+                <div className="mx-auto mb-4 w-16 h-16 flex items-center justify-center rounded-full bg-primary/10">
+                  <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+              ) : (
+                <div className="mx-auto mb-4 w-16 h-16 flex items-center justify-center rounded-full bg-red-100">
+                  <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </div>
+              )}
+              <h3 className={`text-xl font-bold mb-3 ${modalType === 'success' ? 'text-primary-dark' : 'text-red-700'}`}>
+                {modalType === 'success' ? 'Амжилттай' : 'Алдаа гарлаа'}
+              </h3>
+              <div className={`text-base whitespace-pre-line ${
+                modalType === 'success' ? 'text-slate-600' : 'text-red-600'
+              }`}>
+                {modalMessage}
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowModal(false)}
+              className={`mt-5 w-full font-semibold py-2.5 px-4 rounded-xl transition-all ${
+                modalType === 'success'
+                  ? 'bg-primary text-white hover:bg-primary-dark'
+                  : 'bg-red-500 text-white hover:bg-red-600'
+              }`}
+            >
+              {modalType === 'success' ? 'За' : 'Ойлголоо'}
+            </button>
+          </div>
+        </div>
+      )}
     </form>
   );
 }
