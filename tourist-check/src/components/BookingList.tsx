@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react';
 import type { Booking } from '@/lib/types';
 import DailySummary from './DailySummary';
 import { formatDate } from '@/lib/format';
+import { useStore } from '@/lib/store';
 
 const statusColors: Record<string, string> = {
   pending: 'bg-gold/10 text-amber-800 border-gold/40',
@@ -23,6 +24,7 @@ interface Props {
 }
 
 export default function BookingList({ bookings, onEdit }: Props) {
+  const { deleteBooking } = useStore();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
 
@@ -106,12 +108,24 @@ export default function BookingList({ bookings, onEdit }: Props) {
                   {b.busNumber ? ` | Автобус: ${b.busNumber}` : ''}
                 </div>
               </div>
-              <button
-                onClick={() => onEdit?.(b)}
-                className="shrink-0 text-sm text-primary hover:text-primary-light font-medium px-3 py-1.5 rounded-lg hover:bg-primary/5 transition-colors"
-              >
-                Засах
-              </button>
+              <div className="flex gap-1">
+                <button
+                  onClick={() => onEdit?.(b)}
+                  className="shrink-0 text-sm text-primary hover:text-primary-light font-medium px-3 py-1.5 rounded-lg hover:bg-primary/5 transition-colors"
+                >
+                  Засах
+                </button>
+                <button
+                  onClick={async () => {
+                    if (confirm('Захиалгыг устгах уу?')) {
+                      await deleteBooking(b.id);
+                    }
+                  }}
+                  className="shrink-0 text-sm text-red-500 hover:text-red-600 font-medium px-3 py-1.5 rounded-lg hover:bg-red-50 transition-colors"
+                >
+                  Устгах
+                </button>
+              </div>
             </div>
           </div>
         ))}

@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react';
 import type { Booking } from '@/lib/types';
 import DailySummary from './DailySummary';
 import { formatDate } from '@/lib/format';
+import { useStore } from '@/lib/store';
 
 const MONTHS_MN = ['1-р сар', '2-р сар', '3-р сар', '4-р сар', '5-р сар', '6-р сар', '7-р сар', '8-р сар', '9-р сар', '10-р сар', '11-р сар', '12-р сар'];
 const DAYS_MN = ['Ням', 'Дав', 'Мяг', 'Лха', 'Пүр', 'Баа', 'Бям'];
@@ -20,6 +21,7 @@ interface Props {
 }
 
 export default function CalendarView({ bookings, onEdit }: Props) {
+  const { deleteBooking } = useStore();
   const today = new Date();
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
@@ -188,15 +190,28 @@ export default function CalendarView({ bookings, onEdit }: Props) {
                     {b.guide.lastName} {b.guide.firstName} | {b.guide.phone} {b.busNumber ? `| Автобус: ${b.busNumber}` : ''}
                   </div>
                 </div>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onEdit?.(b);
-                  }}
-                  className="text-primary hover:text-primary-light text-sm font-medium shrink-0"
-                >
-                  Засах
-                </button>
+                <div className="flex gap-2 shrink-0">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onEdit?.(b);
+                    }}
+                    className="text-primary hover:text-primary-light text-sm font-medium"
+                  >
+                    Засах
+                  </button>
+                  <button
+                    onClick={async (e) => {
+                      e.stopPropagation();
+                      if (confirm('Захиалгыг устгах уу?')) {
+                        await deleteBooking(b.id);
+                      }
+                    }}
+                    className="text-red-500 hover:text-red-600 text-sm font-medium"
+                  >
+                    Устгах
+                  </button>
+                </div>
               </div>
             ))}
           </div>
